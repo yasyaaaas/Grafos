@@ -1,0 +1,97 @@
+// Estrutura para representar uma aresta com destino, capacidade e fluxo
+struct Edge
+{
+    int to;           // Nó de destino
+    double capacity;  // Capacidade da aresta
+    double flow;      // Fluxo atual na aresta
+};
+
+// Classe para representar um grafo com capacidades associadas às arestas
+class Graph
+{
+public:
+    int n;                           // Número de nós
+    vector<vector<Edge>> adjList;    // Lista de adjacências
+    vector<double> sourceCapacity;   // Capacidade de source para cada nó
+    vector<double> sinkCapacity;     // Capacidade de sink para cada nó
+
+    Graph(int nodes) : n(nodes), adjList(nodes), sourceCapacity(nodes, 0), sinkCapacity(nodes, 0) {}
+
+    // Adiciona uma aresta entre dois nós com capacidade especificada
+    void addEdge(int u, int v, double cap)
+    {
+        adjList[u].push_back({v, cap, 0});   // Aresta direta
+        adjList[v].push_back({u, cap, 0});   // Aresta de retorno (capacidade residual)
+    }
+
+    // Realiza uma busca em largura (BFS) para encontrar um caminho aumentante.
+    double bfs(int s, int t, vector<int> &parent)
+    {
+        vector<bool> visited(n, false);
+        queue<int> q;
+        q.push(s);
+        visited[s] = true;
+        parent[s] = -1;
+
+        while (!q.empty())
+        {
+            int u = q.front();
+            q.pop();
+
+            for (auto &edge : adjList[u])
+            {
+                int v = edge.to;
+                if (!visited[v] && edge.capacity - edge.flow > 0)  // Verifica capacidade residual
+                {
+                    parent[v] = u;
+                    if (v == t)    // Se alcançou o destino, retorna o fluxo disponível
+                        return edge.capacity - edge.flow;
+                    q.push(v);
+                    visited[v] = true;
+                }
+            }
+        }
+        return 0;  // Nenhum caminho aumentante encontrado
+    }
+
+    // Implementa o algoritmo Edmonds-Karp para calcular o fluxo máximo.
+    double edmondsKarp(int s, int t)
+    {
+        vector<int> parent(n, -1);
+        double maxFlow = 0;
+
+        while (true)
+        {
+            double flow = bfs(s, t, parent);  // Encontra caminho aumentante
+            if (flow == 0)
+                break;
+
+            maxFlow += flow;  // Adiciona o fluxo encontrado
+            int v = t;
+
+            // Atualiza os fluxos nas arestas do caminho aumentante
+            while (v != s)
+            {
+                int u = parent[v];
+                for (auto &edge : adjList[u])
+                {
+                    if (edge.to == v)
+                    {
+                        edge.flow += flow;
+                        break;
+                    }
+                }
+                for (auto &edge : adjList[v])
+                {
+                    if (edge.to == u)
+                    {
+                        edge.flow -= flow;
+                        break;
+                    }
+                }
+                v = parent[v];
+            }
+        }
+        return maxFlow;  // Retorna o fluxo máximo calculado
+    }
+};

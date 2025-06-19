@@ -1,0 +1,19 @@
+GRAFOS REAV
+
+- Conceitos
+- Busca
+- Euleriano
+- Hamiltoniano
+- Caminho (min-max, max-min)
+- Dijkstra
+- Prim, Kruskal (como modificar eles)!!!!
+- Componentes fortemente conexos
+- Diametro, excentricidade, raio, centro
+- Base, anti-base
+- Grafo linha!!!!
+- Coloração
+- Conjuntos!!!!
+- AGM
+- Ford-Fulkerson (Matching bipartido, Fluxo)!!!!
+- Ciclos
+- Automorfismo (Grafo isomorfo ao seu complemento dele)!!!!!
